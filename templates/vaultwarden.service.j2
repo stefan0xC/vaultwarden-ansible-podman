@@ -12,9 +12,9 @@ TimeoutStopSec=70
 ExecStart=/usr/bin/podman pod start {{ vaultwarden_name }}
 ExecStop=/usr/bin/podman pod stop -t 10 {{ vaultwarden_name }}
 ExecStopPost=/usr/bin/podman pod stop -t 10 {{ vaultwarden_name }}
-PIDFile=%t/vaultwarden.pid
+PIDFile={{ vaultwarden_pidfile }}
 Type=forking
 
 [Install]
-WantedBy=multi-user.target default.target
+WantedBy=default.target
 

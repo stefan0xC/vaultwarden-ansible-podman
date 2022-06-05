@@ -1,11 +1,11 @@
 ---
-vaultwarden_admin_token: ''
+vaultwarden_admin_token: ""
 vaultwarden_cert_path: "/srv/vaultwarden/certs"
 vaultwarden_data_path: "/srv/vaultwarden/data"
-vaultwarden_db_password: 'postgres'
+vaultwarden_db_password: "postgres"
 vaultwarden_db_path: "/srv/vaultwarden/db"
 vaultwarden_db_port: 5432
-vaultwarden_db_url: 'postgres://postgres:{{vaultwarden_db_password}}@{{vaultwarden_ipaddress}}:{{vaultwarden_db_port}}/postgres'
+vaultwarden_db_url: "postgres://postgres:{{vaultwarden_db_password}}@{{vaultwarden_ipaddress}}:{{vaultwarden_db_port}}/postgres"
 vaultwarden_disable_icons: "true"
 vaultwarden_domain: "https://{{ vaultwarden_fqdn }}"
 vaultwarden_fqdn: "vaultwarden.example.com"
@@ -17,6 +17,7 @@ vaultwarden_ipaddress: "10.89.0.123"
 vaultwarden_name: "vaultwarden"
 vaultwarden_network: "vaultwarden"
 vaultwarden_pidfile: "/run/vaultwarden.pid"
+vaultwarden_port: "8080"
 vaultwarden_signup_allowed: "true"
 vaultwarden_signup_allowed_domains: []
 vaultwarden_signup_verify: "true"
@@ -29,5 +30,3 @@ vaultwarden_smtp_security: "force_tls"
 vaultwarden_smtp_user: "vaultwarden"
 vaultwarden_subnetwork: "10.89.0.0/24"
 vaultwarden_tz: "Europe/Vienna"
-vaultwarden_user: "vaultwarden"
-vaultwarden_user_home: "/home/vaultwarden"

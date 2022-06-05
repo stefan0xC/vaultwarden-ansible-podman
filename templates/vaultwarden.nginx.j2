@@ -1,5 +1,5 @@
 upstream {{ vaultwarden_name }} {
-	server 127.0.0.1:8080;
+	server {{ vaultwarden_ipaddress }}:{{ vaultwarden_port }};
 }
 
 server {
@@ -33,7 +33,7 @@ server {
 		proxy_pass http://{{ vaultwarden_name }}; 
 	}
 	location /notifications/hub {
-		proxy_pass http://127.0.0.1:3012;
+		proxy_pass http://{{ vaultwarden_ipaddress }}:3012;
 		proxy_set_header Upgrade $http_upgrade;
 		proxy_set_header Connection "upgrade";
 	}

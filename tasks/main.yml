@@ -1,35 +1,16 @@
 ---
-- name: ensure vaultwarden group exists
-  become: yes
-  group:
-    name: "{{ vaultwarden_group }}"
-- name: ensure vaultwarden user exists
-  become: yes
-  user:
-    name: "{{ vaultwarden_user }}"
-    home: "{{ vaultwarden_user_home }}"
-    shell: "/bin/bash"
-    group: "{{ vaultwarden_group }}"
-  register: vaultwarden_user_result
-
 - name: ensure vaultwarden directories exists
-  become: yes
   file:
     path: '{{ item }}'
     state: directory
-    owner: "{{ vaultwarden_user }}"
-    group: "{{ vaultwarden_group }}"
   with_items:
     - '{{ vaultwarden_cert_path }}'
     - '{{ vaultwarden_data_path }}'
     - '{{ vaultwarden_db_path }}'
-    - "{{ vaultwarden_user_home }}/.config/systemd/user/"
     - /var/www/letsencrypt
 
 - include_tasks:
     file: nginx.yml
-    apply:
-      become: yes
 - name: setup vaultwarden via podman
   include_tasks: vaultwarden.yml
-#- include_tasks: systemd.yml
+- include_tasks: systemd.yml

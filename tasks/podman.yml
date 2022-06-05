@@ -1,6 +1,5 @@
 ---
 - name: ensure podman is installed
-  become: yes
   package:
     name:
       - podman

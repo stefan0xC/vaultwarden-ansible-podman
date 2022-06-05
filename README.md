@@ -1,14 +1,12 @@
 ansible-vaultwarden
 =========
 
-Installs vaultwarden behind an nginx proxy using postgres backend in a (rootless) podman container.
+Installs vaultwarden behind an nginx proxy using postgres backend in a (rootfull) podman container.
 
 Requirements
 ------------
 
 Ansible Collections (especially the [containers.podman](https://docs.ansible.com/ansible/latest/collections/containers/podman/index.html) collection) are required. You should also have a working SMTP server and a domain pointing to your webserver.
-
-WIP: systemd/user unit files for automatic startup of rootless containers after reboot (and/or rewriting the role for running the container rootfull).
 
 Role Variables
 --------------
@@ -26,6 +24,7 @@ Example Playbook
 ---
 - name: install vaultwarden
   hosts: vaultwarden
+  become: yes
   vars:
     acme_account_email: vaultwarden@example.com
     vaultwarden_admin_token: "VAULTWARDEN_ADMIN_TOKEN"

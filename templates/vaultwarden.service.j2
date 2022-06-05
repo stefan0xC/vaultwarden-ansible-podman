@@ -1,0 +1,20 @@
+[Unit]
+Description={{ vaultwarden_name | capitalize }}
+Documentation=man:podman-generate-systemd(1)
+Wants=network.target
+After=network-online.target
+
+[Service]
+Environment=PODMAN_SYSTEMD_UNIT=%n
+Restart=on-failure
+RestartSec=5s
+TimeoutStopSec=70
+ExecStart=/usr/bin/podman pod start {{ vaultwarden_name }}
+ExecStop=/usr/bin/podman pod stop -t 10 {{ vaultwarden_name }}
+ExecStopPost=/usr/bin/podman pod stop -t 10 {{ vaultwarden_name }}
+PIDFile=%t/vaultwarden.pid
+Type=forking
+
+[Install]
+WantedBy=multi-user.target default.target
+

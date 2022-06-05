@@ -1,0 +1,52 @@
+---
+- name: ensure nginx is installed
+  package:
+    name: nginx
+    state: present
+  notify: start nginx
+
+- name: Generate Diffie-Hellman parameters with the default size (4096 bits)
+  community.crypto.openssl_dhparam:
+    path: /etc/nginx/dhparams.pem
+
+- name: update nginx.conf
+  copy:
+    src: "nginx.conf"
+    dest: /etc/nginx/nginx.conf
+  notify:
+    - restart nginx
+
+- name: ensure nginx snippet for acme challenges exists
+  copy:
+    src: acme.conf
+    dest: /etc/nginx/snippets/acme.conf
+  notify:
+    - restart nginx
+
+- name: ensure nginx default config includes acme snippet
+  lineinfile:
+    path: /etc/nginx/sites-available/default
+    insertafter: "server_name _;"
+    line: "	include snippets/acme.conf;"
+  notify:
+    - restart nginx
+
+- name: flush handlers
+  meta: flush_handlers
+
+- name: ensure certificate exists
+  include_tasks: certificate.yml
+
+- name: ensure vaultwarden nginx config exists
+  template:
+    src: "vaultwarden.nginx.j2"
+    dest: "/etc/nginx/sites-available/{{ vaultwarden_name }}"
+    mode: 0644
+  notify: reload nginx
+
+- name: ensure vaultwarden nginx config is enabled
+  file:
+    src: "../sites-available/{{ vaultwarden_name }}"
+    path: "/etc/nginx/sites-enabled/{{ vaultwarden_name }}"
+    state: link
+  notify: reload nginx

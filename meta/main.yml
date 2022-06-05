@@ -1,0 +1,12 @@
+galaxy_info:
+  author: stefan0xC
+  description: install and configure vaultwarden with postgres database
+
+  license: MIT
+
+  min_ansible_version: 2.9
+
+  platforms:
+    - name: Debian
+      versions:
+        - bullseye

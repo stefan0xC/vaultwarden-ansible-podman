@@ -1,0 +1,65 @@
+---
+- include_tasks: podman.yml
+
+- name: ensure vaultwarden network exists
+  containers.podman.podman_network:
+    name: "{{ vaultwarden_network }}"
+    disable_dns: yes
+    subnet: "{{ vaultwarden_subnetwork }}"
+
+- name: ensure vaultwarden pod exists
+  containers.podman.podman_pod:
+    name: "{{ vaultwarden_name }}"
+    ip: '{{ vaultwarden_ipaddress }}'
+    network: "{{ vaultwarden_network }}"
+    publish:
+      - "8080:8080"
+      - "3012:3012"
+    state: created
+    infra_conmon_pidfile: "/run/user/{{ vaultwarden_user_result['uid'] }}/vaultwarden.pid"
+
+- name: ensure vaultwarden database exists
+  containers.podman.podman_container:
+    name: "{{ vaultwarden_name }}-db"
+    pod: "{{ vaultwarden_name }}"
+    image: docker.io/library/postgres:13
+    state: created
+    log_level: error
+    restart_policy: always
+    env:
+      POSTGRES_PASSWORD: '{{ vaultwarden_db_password }}'
+    volume:
+      - "{{ vaultwarden_db_path }}:/var/lib/postgresql/data"
+
+- name: ensure vaultwarden app exists
+  containers.podman.podman_container:
+    name: "{{ vaultwarden_name }}-app"
+    pod: "{{ vaultwarden_name }}"
+    image: docker.io/vaultwarden/server:latest
+    state: created
+    log_level: error
+    restart_policy: always
+    env:
+      ADMIN_TOKEN: '{{ vaultwarden_admin_token }}'
+      DATABASE_URL: '{{ vaultwarden_db_url }}'
+      DISABLE_ICON_DOWNLOAD: '{{ vaultwarden_disable_icons }}'
+      DOMAIN: '{{ vaultwarden_domain}}'
+      INVITATIONS_ALLOWED: '{{ vaultwarden_invitation_allowed }}'
+      INVITATION_ORG_NAME: '{{ vaultwarden_invitation_name }}'
+      IP_HEADER: 'X-Forwarded-For'
+      LOG_LEVEL: 'error'
+      ROCKET_PORT: 8080
+      SIGNUPS_ALLOWED: '{{ vaultwarden_signup_allowed }}'
+      SIGNUPS_DOMAINS_WHITELIST: "{{ vaultwarden_signup_allowed_domains | join(',') }}"
+      SIGNUPS_VERIFY: "{{ vaultwarden_signup_verify }}"
+      SMTP_FROM: '{{ vaultwarden_smtp_from }}'
+      SMTP_FROM_NAME: '{{ vaultwarden_smtp_from_name }}'
+      SMTP_HOST: '{{ vaultwarden_smtp_host }}'
+      SMTP_PASSWORD: '{{ vaultwarden_smtp_password }}'
+      SMTP_PORT: '{{ vaultwarden_smtp_port }}'
+      SMTP_SECURITY: '{{ vaultwarden_smtp_security }}'
+      SMTP_USERNAME: '{{ vaultwarden_smtp_user }}'
+      TZ: "{{ vaultwarden_tz }}"
+      WEBSOCKET_ENABLED: 'true'
+    volume:
+      - "{{ vaultwarden_data_path }}:/data"

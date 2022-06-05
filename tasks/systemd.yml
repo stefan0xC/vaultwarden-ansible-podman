@@ -1,0 +1,15 @@
+---
+- name: ensure vaultwarden.service exists
+  template:
+    src: "vaultwarden.service.j2"
+    dest: "{{ vaultwarden_user_home }}/.config/systemd/user/{{ vaultwarden_name }}.service"
+    mode: 0644
+
+- name: ensure vaultwarden.service is enabled and started
+  systemd:
+    name: "{{ vaultwarden_name }}.service"
+    state: started
+    scope: user
+    enabled: True
+  environment:
+    XDG_RUNTIME_DIR: "/run/user/{{ vaultwarden_user_result['uid'] }}"

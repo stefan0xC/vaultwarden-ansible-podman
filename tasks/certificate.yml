@@ -1,0 +1,68 @@
+---
+- name: generate account key
+  community.crypto.openssl_privatekey:
+    path: "{{ vaultwarden_cert_path }}/account.pem"
+
+- name: ensure account is registered
+  community.crypto.acme_account:
+    account_key_src: "{{ vaultwarden_cert_path }}/account.pem"
+    acme_directory: https://acme-v02.api.letsencrypt.org/directory
+    acme_version: 2
+    state: present
+    terms_agreed: yes
+    contact:
+      - "mailto:{{ acme_account_email }}"
+  register: account_registration
+
+- name: generate private key
+  community.crypto.openssl_privatekey:
+    path: "{{ vaultwarden_cert_path }}/privkey.pem"
+
+- name: generate certificate signing request
+  community.crypto.openssl_csr:
+    path: "{{ vaultwarden_cert_path }}/csr.pem"
+    privatekey_path: "{{ vaultwarden_cert_path }}/privkey.pem"
+    common_name: "{{ vaultwarden_fqdn }}"
+
+- name: create challenge for {{ vaultwarden_fqdn }}
+  community.crypto.acme_certificate:
+    account_key_src: "{{ vaultwarden_cert_path }}/account.pem"
+    acme_directory: https://acme-v02.api.letsencrypt.org/directory
+    acme_version: 2
+    modify_account: no
+    csr: "{{ vaultwarden_cert_path }}/csr.pem"
+    cert: "{{ vaultwarden_cert_path }}/cert.pem"
+    fullchain: "{{ vaultwarden_cert_path }}/fullchain.pem"
+    chain: "{{ vaultwarden_cert_path }}/chain.pem"
+  register: domain_challenge
+
+- name: ensure acme-challenge directory exists
+  file:
+    path: /var/www/letsencrypt/.well-known/acme-challenge
+    state: directory
+  when: domain_challenge is changed
+
+- name: fulfill the challenge
+  copy:
+    dest: "/var/www/letsencrypt/{{ domain_challenge['challenge_data'][vaultwarden_fqdn]['http-01']['resource'] }}"
+    content: "{{ domain_challenge['challenge_data'][vaultwarden_fqdn]['http-01']['resource_value'] }}"
+  when: domain_challenge is changed and vaultwarden_fqdn in domain_challenge['challenge_data']
+
+- name: validate challenge
+  community.crypto.acme_certificate:
+    account_key_src: "{{ vaultwarden_cert_path }}/account.pem"
+    acme_directory: https://acme-v02.api.letsencrypt.org/directory
+    acme_version: 2
+    modify_account: no
+    csr: "{{ vaultwarden_cert_path }}/csr.pem"
+    cert: "{{ vaultwarden_cert_path }}/cert.pem"
+    fullchain: "{{ vaultwarden_cert_path }}/fullchain.pem"
+    chain: "{{ vaultwarden_cert_path }}/chain.pem"
+    remaining_days: 60
+    data: "{{ domain_challenge }}"
+  when: domain_challenge is changed
+
+- name: cleanup challenge
+  file:
+    path: /var/www/letsencrypt/.well-known
+    state: absent

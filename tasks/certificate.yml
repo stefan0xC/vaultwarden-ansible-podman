@@ -6,7 +6,7 @@
 - name: ensure account is registered
   community.crypto.acme_account:
     account_key_src: "{{ vaultwarden_cert_path }}/account.pem"
-    acme_directory: https://acme-v02.api.letsencrypt.org/directory
+    acme_directory: "{{ vaultwarden_acme_directory }}" 
     acme_version: 2
     state: present
     terms_agreed: yes
@@ -27,7 +27,7 @@
 - name: create challenge for {{ vaultwarden_fqdn }}
   community.crypto.acme_certificate:
     account_key_src: "{{ vaultwarden_cert_path }}/account.pem"
-    acme_directory: https://acme-v02.api.letsencrypt.org/directory
+    acme_directory: "{{ vaultwarden_acme_directory }}" 
     acme_version: 2
     modify_account: no
     csr: "{{ vaultwarden_cert_path }}/csr.pem"
@@ -38,20 +38,20 @@
 
 - name: ensure acme-challenge directory exists
   file:
-    path: /var/www/letsencrypt/.well-known/acme-challenge
+    path: /var/www/acme/.well-known/acme-challenge
     state: directory
   when: domain_challenge is changed
 
 - name: fulfill the challenge
   copy:
-    dest: "/var/www/letsencrypt/{{ domain_challenge['challenge_data'][vaultwarden_fqdn]['http-01']['resource'] }}"
+    dest: "/var/www/acme/{{ domain_challenge['challenge_data'][vaultwarden_fqdn]['http-01']['resource'] }}"
     content: "{{ domain_challenge['challenge_data'][vaultwarden_fqdn]['http-01']['resource_value'] }}"
   when: domain_challenge is changed and vaultwarden_fqdn in domain_challenge['challenge_data']
 
 - name: validate challenge
   community.crypto.acme_certificate:
     account_key_src: "{{ vaultwarden_cert_path }}/account.pem"
-    acme_directory: https://acme-v02.api.letsencrypt.org/directory
+    acme_directory: "{{ vaultwarden_acme_directory }}" 
     acme_version: 2
     modify_account: no
     csr: "{{ vaultwarden_cert_path }}/csr.pem"
@@ -64,5 +64,5 @@
 
 - name: cleanup challenge
   file:
-    path: /var/www/letsencrypt/.well-known
+    path: /var/www/acme/.well-known
     state: absent

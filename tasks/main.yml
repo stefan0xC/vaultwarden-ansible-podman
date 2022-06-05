@@ -7,7 +7,7 @@
     - '{{ vaultwarden_cert_path }}'
     - '{{ vaultwarden_data_path }}'
     - '{{ vaultwarden_db_path }}'
-    - /var/www/letsencrypt
+    - /var/www/acme
 
 - include_tasks:
     file: nginx.yml

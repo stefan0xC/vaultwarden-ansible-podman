@@ -34,7 +34,7 @@ Example Playbook
     vaultwarden_smtp_password: SMTP_PASSWORD
     vaultwarden_smtp_user: vaultwarden
   roles:
-    - stefan0xC.vaultwarden_ansible_podman
+    - stefan0xc.vaultwarden_ansible_podman
 ```
 
 

@@ -1,5 +1,5 @@
 upstream {{ vaultwarden_name }} {
-	server {{ vaultwarden_ipaddress }}:{{ vaultwarden_port }};
+	server {{ vaultwarden_pod_ipaddress }}:{{ vaultwarden_port }};
 }
 
 server {
@@ -33,7 +33,7 @@ server {
 		proxy_pass http://{{ vaultwarden_name }}; 
 	}
 	location /notifications/hub {
-		proxy_pass http://{{ vaultwarden_ipaddress }}:3012;
+		proxy_pass http://{{ vaultwarden_pod_ipaddress }}:3012;
 		proxy_set_header Upgrade $http_upgrade;
 		proxy_set_header Connection "upgrade";
 	}
@@ -45,5 +45,3 @@ server {
 	error_log /var/log/nginx/{{ vaultwarden_fqdn }}-error.log;
 	access_log /var/log/nginx/{{ vaultwarden_fqdn }}-access.log combined;
 }
-
-

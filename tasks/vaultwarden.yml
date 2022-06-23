@@ -3,18 +3,18 @@
 
 - name: ensure vaultwarden network exists
   containers.podman.podman_network:
-    name: "{{ vaultwarden_network }}"
+    name: "{{ vaultwarden_pod_network_name }}"
     disable_dns: yes
-    subnet: "{{ vaultwarden_subnetwork }}"
+    subnet: "{{ vaultwarden_pod_subnetwork }}"
   notify: restart vaultwarden
 
 - name: ensure vaultwarden pod exists
   containers.podman.podman_pod:
     name: "{{ vaultwarden_name }}"
-    ip: '{{ vaultwarden_ipaddress }}'
-    network: "{{ vaultwarden_network }}"
+    ip: '{{ vaultwarden_pod_ipaddress }}'
+    network: "{{ vaultwarden_pod_network_name }}"
     state: created
-    infra_conmon_pidfile: "{{ vaultwarden_pidfile }}"
+    infra_conmon_pidfile: "{{ vaultwarden_pod_pidfile }}"
   notify: restart vaultwarden
 
 - name: ensure vaultwarden database exists

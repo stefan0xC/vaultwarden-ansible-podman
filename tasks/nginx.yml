@@ -17,8 +17,8 @@
     - restart nginx
 
 - name: ensure nginx snippet for acme challenges exists
-  copy:
-    src: acme.conf
+  template:
+    src: acme.conf.j2
     dest: /etc/nginx/snippets/acme.conf
   notify:
     - restart nginx

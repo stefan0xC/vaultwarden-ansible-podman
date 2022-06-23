@@ -26,7 +26,7 @@ Example Playbook
   hosts: vaultwarden.example.com
   become: yes
   vars:
-    acme_account_email: vaultwarden@example.com
+    vaultwarden_acme_account_email: vaultwarden@example.com
     vaultwarden_admin_token: "VAULTWARDEN_ADMIN_TOKEN"
     vaultwarden_fqdn: "vaultwarden.example.com"
     vaultwarden_smtp_from: vaultwarden@example.com

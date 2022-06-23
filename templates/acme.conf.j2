@@ -1,4 +1,4 @@
 location /.well-known/acme-challenge {
-	root /var/www/acme;
+	root {{ vaultwarden_acme_path }};
 	try_files $uri =404;
 }

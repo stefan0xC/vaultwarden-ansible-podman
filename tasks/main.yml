@@ -4,10 +4,10 @@
     path: '{{ item }}'
     state: directory
   with_items:
+    - '{{ vaultwarden_acme_path }}' 
     - '{{ vaultwarden_cert_path }}'
     - '{{ vaultwarden_data_path }}'
-    - '{{ vaultwarden_db_path }}'
-    - /var/www/acme
+    - '{{ vaultwarden_db_path   }}'
 
 - include_tasks:
     file: nginx.yml

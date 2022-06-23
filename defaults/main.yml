@@ -1,5 +1,6 @@
 ---
 vaultwarden_acme_directory: "https://acme-v02.api.letsencrypt.org/directory"
+vaultwarden_acme_path: "/var/www/acme"
 vaultwarden_admin_token: ""
 vaultwarden_cert_path: "/srv/vaultwarden/certs"
 vaultwarden_data_path: "/srv/vaultwarden/data"

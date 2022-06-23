@@ -11,7 +11,7 @@
     state: present
     terms_agreed: yes
     contact:
-      - "mailto:{{ acme_account_email }}"
+      - "mailto:{{ vaultwarden_acme_account_email }}"
   register: account_registration
 
 - name: generate private key
@@ -38,7 +38,7 @@
 
 - name: ensure acme-challenge directory exists
   file:
-    path: /var/www/acme/.well-known/acme-challenge
+    path: "{{ vaultwarden_acme_path }}/.well-known/acme-challenge"
     state: directory
   when: domain_challenge is changed
 
@@ -61,8 +61,9 @@
     remaining_days: 60
     data: "{{ domain_challenge }}"
   when: domain_challenge is changed
+  notify: reload nginx
 
 - name: cleanup challenge
   file:
-    path: /var/www/acme/.well-known
+    path: "{{ vaultwarden_acme_path }}/.well-known/acme-challenge"
     state: absent

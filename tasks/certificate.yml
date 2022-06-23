@@ -44,7 +44,7 @@
 
 - name: fulfill the challenge
   copy:
-    dest: "/var/www/acme/{{ domain_challenge['challenge_data'][vaultwarden_fqdn]['http-01']['resource'] }}"
+    dest: "{{ vaultwarden_acme_path }}/{{ domain_challenge['challenge_data'][vaultwarden_fqdn]['http-01']['resource'] }}"
     content: "{{ domain_challenge['challenge_data'][vaultwarden_fqdn]['http-01']['resource_value'] }}"
   when: domain_challenge is changed and vaultwarden_fqdn in domain_challenge['challenge_data']
 

@@ -20,6 +20,7 @@ server {
 	ssl_certificate_key {{ vaultwarden_cert_path }}/privkey.pem;
 
 	client_max_body_size 128M;
+	error_page 404 /404.html;
 
 	location / {
 		proxy_set_header Host $host;

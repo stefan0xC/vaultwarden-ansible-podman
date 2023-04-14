@@ -35,7 +35,7 @@
   containers.podman.podman_container:
     name: "{{ vaultwarden_name }}-app"
     pod: "{{ vaultwarden_name }}"
-    image: docker.io/vaultwarden/server:latest
+    image: docker.io/vaultwarden/server:testing
     state: created
     log_level: error
     restart_policy: always
@@ -45,6 +45,7 @@
       DATABASE_URL: '{{ vaultwarden_db_url }}'
       DISABLE_ICON_DOWNLOAD: '{{ vaultwarden_disable_icons }}'
       DOMAIN: '{{ vaultwarden_domain}}'
+      ORG_GROUPS_ENABLED: 'false'
       INVITATIONS_ALLOWED: '{{ vaultwarden_invitation_allowed }}'
       INVITATION_ORG_NAME: '{{ vaultwarden_invitation_name }}'
       IP_HEADER: 'X-Forwarded-For'
@@ -61,7 +62,7 @@
       SMTP_SECURITY: '{{ vaultwarden_smtp_security }}'
       SMTP_USERNAME: '{{ vaultwarden_smtp_user }}'
       TZ: "{{ vaultwarden_tz }}"
-      WEBSOCKET_ENABLED: 'true'
+      WEBSOCKET_ENABLED: 'false'
     volume:
       - "{{ vaultwarden_data_path }}:/data"
   notify: restart vaultwarden
